@@ -1,8 +1,20 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import env from "dotenv";
+import { cors } from "hono/cors";
 const app = new Hono();
 env.config();
+
+app.use("*", async (c, next) => {
+  cors({
+    origin: "*",
+    allowHeaders: ["Origin", "Content-Type", "Authorization"],
+    allowMethods: ["GET", "OPTIONS", "POST", "PUT", "DELETE"],
+    credentials: true,
+  });
+  await next();
+});
+
 app.get("/api", (c) => {
   return c.json({ url: "https://binancehub.vercel.app/" });
 });
